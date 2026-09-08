@@ -7,38 +7,36 @@ async function fetchAPI(key) {
 }
 
 export default function StatusPage() {
-    return ( 
-      <>
-        <h1>Status do Site</h1>
-        <h2>Banco de Dados</h2>
-        <UpdatedAt />
-      </>
-    );
+  return (
+    <>
+      <h1>Status do Site</h1>
+      <h2>Banco de Dados</h2>
+      <SystemStatus />
+    </>
+  );
 }
 
-function UpdatedAt() {
+function SystemStatus() {
   const { isLoading, data } = useSWR("/api/v1/status", fetchAPI, {
     refreshInterval: 10000,
   });
 
-  let updatedAtText = "Carregando...";
-  let databaseOpenedConnectionsText = "";
-  let databaseVersionText = "";
-  let databaseMaxConnectionsText = "";
-
-  if(!isLoading && data) {
-    updatedAtText = new Date(data.updated_at).toLocaleString("pt-BR");
-    databaseVersionText = `Versão do PostgreSQL: ${data.dependencies.database.version}`;
-    databaseOpenedConnectionsText = `Conexões abertas: ${data.dependencies.database.opened_connections}`; 
-    databaseMaxConnectionsText = `Conexões disponíveis: ${data.dependencies.database.max_connections}`; 
+  if (isLoading) {
+    return <div>Carregando</div>;
   }
+
+  const { updated_at, dependencies } = data;
+  const { version, opened_connections, max_connections } =
+    dependencies.database;
+
+  const updatedAtText = new Date(updated_at).toLocaleString("pt-BR");
 
   return (
     <div>
       <div>Última atualização: {updatedAtText}</div>
-      {databaseMaxConnectionsText && <div>{databaseMaxConnectionsText}</div>}
-      {databaseOpenedConnectionsText && <div>{databaseOpenedConnectionsText}</div>}
-      {databaseVersionText && <div>{databaseVersionText}</div>}
+      <div>Conexões disponíveis: {max_connections}</div>
+      <div>Conexões abertas: {opened_connections}</div>
+      <div>Versão do PostgreSQL: {version}</div>
     </div>
   );
 }
