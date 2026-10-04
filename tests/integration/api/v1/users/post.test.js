@@ -79,7 +79,7 @@ describe("POST /api/v1/users", () => {
     });
 
     test("With duplicated 'username'", async () => {
-      const response3 = await fetch("http://localhost:3000/api/v1/users", {
+      const response = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -91,9 +91,9 @@ describe("POST /api/v1/users", () => {
         }),
       });
 
-      expect(response3.status).toBe(201);
+      expect(response.status).toBe(201);
 
-      const response4 = await fetch("http://localhost:3000/api/v1/users", {
+      const response2 = await fetch("http://localhost:3000/api/v1/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,11 +105,11 @@ describe("POST /api/v1/users", () => {
         }),
       });
 
-      expect(response4.status).toBe(400);
+      expect(response2.status).toBe(400);
 
-      const response4Body = await response4.json();
+      const response2Body = await response2.json();
 
-      expect(response4Body).toEqual({
+      expect(response2Body).toEqual({
         name: "ValidationError",
         message: "O username informado já está sendo utilizado.",
         action: "Utilize outro username para realizar o cadastro.",
